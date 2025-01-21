@@ -1,0 +1,25 @@
+# config.yaml
+
+general:
+  script_name: "add_papers_from_title_list.py"
+  description: "This script creates a set of paper nodes and possibly author nodes."
+  version: "1.0.0"
+
+database:
+  uri: 'bolt://localhost:7687'
+  username: 'neo4j'
+  password: 'neo4j_is_the_best'
+  database: 'neo4j'
+
+file_paths:
+  paper_titles: "C:/Users/tjker/Desktop/Research/Projects/lit_review/data/paper_titles.txt"
+  output: "/path/to/output"
+
+api:
+  max_retries: 6
+  base_delay: 1
+  max_delay: 32
+
+graph:
+  author: True
+  citation: True

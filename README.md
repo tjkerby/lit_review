@@ -1,8 +1,7 @@
 # Log to orient myself in my work
 
 ## TODO
-* Get a list of pdfs for the papers I'm interested in
-* Chunk these papers and save off each paper as a chunk node with associated attributes
+* Chunk these papers and save off each paper as a chunk node with associated attributes - see https://learn.deeplearning.ai/courses/knowledge-graphs-rag for help
 * Work on RAG with KG to improve question answering capabilities
 
 ## Nice to haves
@@ -13,3 +12,4 @@
 ## Completed
 * Create basic KG from api calls to semantic scholar
 * Create embeddings for abstracts
+* Get a list of pdfs for the papers I'm interested in
