@@ -1,0 +1,23 @@
+# config.yaml
+
+general:
+  script_name: "add_chunks.py"
+  description: "This script loads pdfs, chunks them up, and creates their embeddings."
+  version: "1.0.0"
+
+database:
+  uri: 'bolt://localhost:7687'
+  username: 'neo4j'
+  password: 'neo4j_is_the_best'
+  database: 'new'
+
+data:
+  data_path: 'C:/Users/tjker/Desktop/Research/Projects/lit_review/data'
+  titles_path: 'C:/Users/tjker/Desktop/Research/Projects/lit_review/data/paper_titles.txt'
+
+model:
+  model_id: "meta-llama/Llama-3.2-1B"
+
+embedding:
+  size: 2048
+  similarity: 'cosine'
