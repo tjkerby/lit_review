@@ -2,6 +2,7 @@ import time
 import requests
 import json
 import pandas as pd
+from tqdm.auto import tqdm
 
 class RateLimitExceededError(Exception):
     """Custom exception for rate limit errors."""
@@ -149,3 +150,22 @@ def get_paper_references(paper_id, fields=None, year=None, limit=None):
     else:
         print(f"Error {response.status_code}: Unable to fetch citations for paper ID {paper_id}")
         return None
+
+def extract_paper_data(titles, max_retries=6, base_delay=1, max_delay=32):
+    data = []
+    for title in tqdm(titles):
+        try:
+            paper_data = exponential_backoff_retry(
+                search_paper_by_title,
+                title=title,
+                max_retries=max_retries,
+                base_delay=base_delay,
+                max_delay=max_delay
+            )
+            if paper_data:
+                data.append(paper_data)
+        except RateLimitExceededError:
+            print("Exceeded rate limit. Please try again later.")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+    return data

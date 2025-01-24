@@ -1,57 +1,73 @@
-def create_node(tx, label, properties):
-    query = f"CREATE (n:{label} $properties)"
-    tx.run(query, properties=properties)
-    
-def create_relationship(tx, label1, properties1, relationship_type, label2, properties2):
-    query = (
-        f"MATCH (a:{label1}),(b:{label2}) "
-        f"WHERE a.title = $title1 AND b.title = $title2 "
-        f"CREATE (a)-[r:{relationship_type}]->(b)"
-    )
-    tx.run(query, title1=properties1['title'], title2=properties2['title'])
-    
-def create_authored_rel(tx, properties1, properties2):
-    query = (
-        f"MATCH (p:{'Paper'}),(a:{'Author'}) "
-        f"WHERE p.paperId = $paperId AND a.authorId = $authorId "
-        f"MERGE (a)-[r:{'Authored'}]->(p)"
-    )
-    tx.run(query, paperId=properties1['paperId'], authorId=properties2['authorId'])
-    
-def create_cites_rel(tx, properties1, properties2):
-    query = (
-        f"MATCH (p1:{'Paper'}),(p2:{'Paper'}) "
-        f"WHERE p1.paperId = $paperId1 AND p2.paperId = $paperId2 "
-        f"MERGE (p1)-[r:{'Cited'}]->(p2)"
-    )
-    tx.run(query, paperId1=properties1['paperId'], paperId2=properties2['paperId'])
+from tqdm.auto import tqdm
 
-def get_or_create_node(tx, label, properties):
-    query = f"MATCH (n:{label} {{title: $properties.title}}) RETURN n"
-    result = tx.run(query, properties=properties)
-    node = result.single()
-    if node is not None:
-        return node["n"]
-    else:
-        return create_node(tx, label, properties)
+def create_paper_nodes(kg, paper_data, return_authors=True):
+    author_info = []
+    for i, paper in tqdm(enumerate(paper_data)):
+        if paper is None:
+            continue
+        paper_properties = {key: value for key, value in paper.items() if key != 'authors'}
+        paper_properties['level'] = 1
+        result = create_paper_node(kg, paper_properties)
+        if return_authors:
+            author_info.append({key: value for key, value in paper.items() if key in ['paperId', 'authors']})
     
-def get_or_create_paper_node(tx, properties):
-    query = f"MATCH (p:Paper {{paperId: $properties.paperId}}) RETURN p"
-    result = tx.run(query, properties=properties)
-    node = result.single()
-    if node is not None:
-        return node["p"]
-    else:
-        return create_node(tx, "Paper", properties)
+    if return_authors:
+        return author_info
     
-def get_or_create_author_node(tx, author):
-    query = f"MATCH (a:Author {{authorId: $author.authorId}}) RETURN a"
-    result = tx.run(query, author=author)
-    node = result.single()
-    if node is not None:
-        return node["a"]
-    else:
-        query = "MERGE (n:Author {authorId: $authorId, name: $name}) RETURN n"
-        result = tx.run(query, authorId=author['authorId'], name=author['name'])
-        return result.single()["n"]
+def create_paper_node(kg, paper_data):
+    cypher = """
+    MERGE (p:Paper {paperId: $paper_data.paperId})
+    SET p += $paper_data
+    RETURN p
+    """
+    return kg.query(cypher, params={'paper_data': paper_data})
+    
+def create_author_nodes(kg, author_info):
+    for paper_authors in tqdm(author_info):
+        if paper_authors is None:
+            continue
+        for author in paper_authors['authors']:
+            result = create_author_node(kg, author)
+            
+def create_author_node(kg, author_info):
+    cypher = """
+    MERGE (a:Author {authorId: $author.authorId, name: $author.name})
+    RETURN a
+    """
+    return kg.query(cypher, params={'author': author_info})
+            
+def create_authored_rels_papers(kg, author_info):   
+    for paper_authors in tqdm(author_info):
+        if paper_authors is None:
+            continue
+        for author in paper_authors['authors']:
+            result = create_authored_rel(kg, paper_authors['paperId'], author['authorId'])
+            
+def create_authored_rel_paper(kg, paperId, authors):
+    for author in authors:
+        result = create_authored_rel(kg, paperId, author['authorId'])
+            
+def create_authored_rel(kg, paperId, authorId):
+    cypher = """
+    MATCH (p:Paper {paperId: $paperId})
+    MATCH (a:Author {authorId: $authorId})
+    MERGE (a)-[:Authored]->(p)
+    """
+    return kg.query(cypher, params={'paperId': paperId, 'authorId': authorId})
 
+def create_cites_rel(kg, p1_id, p2_id):  
+    cypher = """
+    MATCH (p1:Paper {paperId: $paperId1})
+    MATCH (p2:Paper {paperId: $paperId2})
+    MERGE (p1)-[r:Cited]->(p2)
+    """    
+    return kg.query(cypher, params={'paperId1': p1_id, 'paperId2': p2_id})
+    
+def search_papers_by_paperid(kg, paperId):
+    cypher = """
+    MATCH (p:Paper {paperId: $paperId})
+    RETURN p
+    """
+    result = kg.query(cypher, params={'paperId': paperId})
+    assert len(result) <= 1
+    return result
