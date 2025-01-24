@@ -9,7 +9,11 @@ database:
   uri: 'bolt://localhost:7687'
   username: 'neo4j'
   password: 'neo4j_is_the_best'
-  database: 'neo4j'
+  database: 'new'
 
 model:
   model_id: "meta-llama/Llama-3.2-1B"
+
+embedding:
+  size: 2048
+  similarity: 'cosine'

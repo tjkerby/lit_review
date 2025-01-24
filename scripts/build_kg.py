@@ -1,25 +1,14 @@
-import yaml
-from langchain_neo4j import Neo4jGraph
 import sys
 
 sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/lit_review')
 import semantic_scholar_api as ss_api
 import neo4j_utils as nu
 import kg_builder as kgb
-
-def load_config(config_file):
-    with open(config_file, 'r') as file:
-        config = yaml.safe_load(file)
-    return config
+import utils 
 
 def main(config_file="C:/Users/tjker/Desktop/Research/Projects/lit_review/configs/build_kg.yaml"):
-    config = load_config(config_file)
-    kg = Neo4jGraph(
-        url=config['database']['uri'], 
-        username=config['database']['username'], 
-        password=config['database']['password'],
-        database=config['database']['database']
-    )
+    config = utils.load_config(config_file)
+    kg = utils.load_kg(config)
 
     with open(config['file_paths']['paper_titles'], 'r') as file:
         titles = [line.strip() for line in file]
