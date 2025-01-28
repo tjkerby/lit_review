@@ -47,7 +47,8 @@ def main():
     )
     
     kg.query("""
-        CREATE FULLTEXT INDEX paperTitleIndex FOR (p:Paper) ON EACH [p.title]
+        CREATE FULLTEXT INDEX paperTitleIndex IF NOT EXISTS
+        FOR (p:Paper) ON EACH [p.title]
         """
     )
 

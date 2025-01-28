@@ -17,7 +17,7 @@ config = {
         'database': os.getenv("NEO4J_DATABASE")
     },
     'file_paths': {
-        'paper_titles': "C:/Users/tjker/Desktop/Research/Projects/lit_review/data/paper_titles.txt",
+        'paper_titles': os.getenv("PROJECT_PATH") + "/data/paper_titles.txt",
         'output': "/path/to/output"
     },
     'api': {
