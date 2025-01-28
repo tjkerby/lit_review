@@ -48,17 +48,20 @@ def exponential_backoff_retry(
             raise
 
 
-def search_paper_by_title(title, year=None):
+def search_paper_by_title(title, year=None, s2_api_key=None):
     url = "https://api.semanticscholar.org/graph/v1/paper/search"
     params = {
         "query": f"title:({title})",
         "fields": "title,url,publicationTypes,publicationDate,citationCount,authors,abstract",
         "limit": 1  # Adjust as needed
     }
+    headers = {
+        'X-API-KEY': s2_api_key,
+    }
     if year:
         params['year'] = year
 
-    response = requests.get(url, params=params)
+    response = requests.get(url, params=params, headers=headers)
     if response.status_code == 200:
         data = response.json()
         if data.get("data"):
@@ -71,7 +74,7 @@ def search_paper_by_title(title, year=None):
     else:
         response.raise_for_status()
         
-def get_paper_citations(paper_id, fields=None, year=None, limit=None):
+def get_paper_citations(paper_id, fields=None, year=None, limit=None, s2_api_key=None):
     """
     Retrieves citation information for a given paper ID from the Semantic Scholar API.
 
@@ -101,8 +104,12 @@ def get_paper_citations(paper_id, fields=None, year=None, limit=None):
         params['year'] = year
     if limit:
         params['limit'] = limit
+        
+    headers = {
+        'X-API-KEY': s2_api_key,
+    }
     
-    response = requests.get(base_url, params=params)
+    response = requests.get(base_url, params=params, headers=headers)
     if response.status_code == 200:
         return response.json()
     elif response.status_code == 429:
@@ -111,7 +118,7 @@ def get_paper_citations(paper_id, fields=None, year=None, limit=None):
         print(f"Error {response.status_code}: Unable to fetch citations for paper ID {paper_id}")
         return None
     
-def get_paper_references(paper_id, fields=None, year=None, limit=None):
+def get_paper_references(paper_id, fields=None, year=None, limit=None, s2_api_key=None):
     """
     Retrieves citation information for a given paper ID from the Semantic Scholar API.
 
@@ -142,7 +149,11 @@ def get_paper_references(paper_id, fields=None, year=None, limit=None):
     if limit:
         params['limit'] = limit
     
-    response = requests.get(base_url, params=params)
+    headers = {
+        'X-API-KEY': s2_api_key,
+    }
+    
+    response = requests.get(base_url, params=params, headers=headers)
     if response.status_code == 200:
         return response.json()
     elif response.status_code == 429:
@@ -151,13 +162,14 @@ def get_paper_references(paper_id, fields=None, year=None, limit=None):
         print(f"Error {response.status_code}: Unable to fetch citations for paper ID {paper_id}")
         return None
 
-def extract_paper_data(titles, max_retries=6, base_delay=1, max_delay=32):
+def extract_paper_data(titles, max_retries=6, base_delay=1, max_delay=32, s2_api_key=None):
     data = []
     for title in tqdm(titles):
         try:
             paper_data = exponential_backoff_retry(
                 search_paper_by_title,
                 title=title,
+                s2_api_key=s2_api_key,
                 max_retries=max_retries,
                 base_delay=base_delay,
                 max_delay=max_delay

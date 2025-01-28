@@ -5,6 +5,9 @@ import sys
 
 sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/lit_review')
 import utils 
+
+sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/configs')
+from abstract_embeddings_config import config
   
 def compute_embedding(text, tokenizer, model):
         inputs = tokenizer(text, return_tensors="pt")
@@ -12,8 +15,7 @@ def compute_embedding(text, tokenizer, model):
             outputs = model(**inputs) 
         return outputs.last_hidden_state.mean(dim=1).squeeze(0).tolist()
 
-def main(config_file="C:/Users/tjker/Desktop/Research/Projects/lit_review/configs/abstract_embeddings.yaml"):
-    config = utils.load_config(config_file)
+def main():
     kg = utils.load_kg(config)
 
     tokenizer = AutoTokenizer.from_pretrained(config['model']['model_id'])

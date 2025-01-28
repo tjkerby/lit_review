@@ -1,9 +1,9 @@
 import semantic_scholar_api as ss_api
 import neo4j_utils as nu
 
-def build_citation_data(kg, config, paperId):
+def build_citation_data(kg, config, paperId, s2_api_key=None):
     try:
-        citation_data = ss_api.exponential_backoff_retry(ss_api.get_paper_references, paperId, fields=config['graph']['citation_fields'])
+        citation_data = ss_api.exponential_backoff_retry(ss_api.get_paper_references, paperId, fields=config['graph']['citation_fields'], s2_api_key=s2_api_key)
         for cited_paper in citation_data['data']:
             cited_paper = cited_paper['citedPaper']
             if cited_paper['paperId'] is None:
