@@ -17,7 +17,10 @@ config = {
     },
     'data': {
         'data_path': os.getenv("PROJECT_PATH") + 'data',
-        'titles_path': os.getenv("PROJECT_PATH") + 'data/paper_titles.txt'
+        'titles_path': os.getenv("PROJECT_PATH") + 'data/paper_titles.txt',
+        'prep_paper_chunk_output_name': 'paper_chunk_preparation.json', # Intial file with structure for creating chunks
+        'paper_chunk_input_name': 'paper_chunk_preparation.json', # Saved file with urls linking to pdfs 
+        'paper_chunk_output_name': 'paper_node_to_pdf_with_url.json' # Saved file with file_paths to pdfs
     },
     'model': {
         'model_id': "meta-llama/Llama-3.2-1B"
