@@ -23,10 +23,16 @@ config = {
         'paper_chunk_output_name': 'paper_node_to_pdf_with_url.json' # Saved file with file_paths to pdfs
     },
     'model': {
-        'model_id': "meta-llama/Llama-3.2-1B"
+        'model_id': 'meta-llama/Llama-3.2-1B-Instruct'
+        # 'model_id': "meta-llama/Llama-3.2-1B"
     },
     'embedding': {
-        'size': 2048,
-        'similarity': 'cosine'
+        'size': 768,#2048
+        'similarity': 'cosine',
+        'model_id': 'sentence-transformers/multi-qa-mpnet-base-dot-v1'
+    },
+    'chunks': {
+        'chunk_size': 512,
+        'chunk_overlap': 50
     }
 }

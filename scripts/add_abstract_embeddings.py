@@ -5,15 +5,10 @@ import sys
 
 sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/lit_review')
 import utils 
+import rag_utils as rag
 
 sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/configs')
 from abstract_embeddings_config import config
-  
-def compute_embedding(text, tokenizer, model):
-        inputs = tokenizer(text, return_tensors="pt")
-        with torch.no_grad():     
-            outputs = model(**inputs) 
-        return outputs.last_hidden_state.mean(dim=1).squeeze(0).tolist()
 
 def main():
     kg = utils.load_kg(config)
@@ -29,7 +24,7 @@ def main():
     
     for record in tqdm(result):       
         if record["abstract"]:
-            embedding = compute_embedding(record["abstract"], tokenizer, model)
+            embedding = rag.compute_embedding(record["abstract"], tokenizer, model)
             kg.query("""
                 MATCH (p:Paper) WHERE elementId(p) = $node_id
                 SET p.abstractEmbedding = $embedding

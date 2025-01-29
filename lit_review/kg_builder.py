@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+import pymupdf4llm
 
 import semantic_scholar_api as ss_api
 import neo4j_utils as nu
@@ -101,3 +102,16 @@ def download_pdfs_from_urls(config, verbose=False):
     papers_json = json.dumps(updated_data, indent=4)
     with open(f"{config['data']['data_path']}/{config['data']['paper_chunk_output_name']}", 'w') as json_file:
         json_file.write(papers_json)
+        
+def paper_data_from_file(paper, text_splitter, verbose=False):
+    chunks_with_metadata = []
+    md_text = pymupdf4llm.to_markdown(paper['pdf_path'], show_progress=verbose)
+    split_text = text_splitter.split_text(md_text)
+    for i, chunk in enumerate(split_text):
+        chunks_with_metadata.append({
+            'text': chunk, 
+            'paperId': paper['paperId'],
+            'chunkId': f"{i}_{paper['paperId']}"
+        })
+    if verbose: print(f'\tSplit into {len(split_text)} chunks')
+    return chunks_with_metadata
