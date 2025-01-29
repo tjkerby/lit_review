@@ -41,3 +41,14 @@ RETURN
     authRel,
     citations
 """
+
+kg.query("""
+    MATCH (c:Chunk) 
+    DETACH DELETE c
+    """
+)
+
+kg.query(""" 
+DROP INDEX paper_chunks IF EXISTS
+"""
+)

@@ -2,6 +2,7 @@ import os
 import requests
 import json
 import pymupdf4llm
+from tqdm.auto import tqdm
 
 import semantic_scholar_api as ss_api
 import neo4j_utils as nu
@@ -115,3 +116,26 @@ def paper_data_from_file(paper, text_splitter, verbose=False):
         })
     if verbose: print(f'\tSplit into {len(split_text)} chunks')
     return chunks_with_metadata
+
+def create_chunk_nodes(kg, data, text_splitter, config):
+    kg.query("""
+    CREATE CONSTRAINT unique_chunk IF NOT EXISTS 
+        FOR (c:Chunk) REQUIRE c.chunkId IS UNIQUE
+    """)
+
+    merge_chunk_node_query = """
+    MERGE(mergedChunk:Chunk {chunkId: $chunkParam.chunkId})
+        ON CREATE SET 
+            mergedChunk.paperId = $chunkParam.paperId, 
+            mergedChunk.source = $chunkParam.paperId,
+            mergedChunk.text = $chunkParam.text
+    RETURN mergedChunk
+    """
+
+    node_count = 0
+    for paper in tqdm(data):
+        chunks = paper_data_from_file(paper, text_splitter)
+        for chunk in chunks:
+            kg.query(merge_chunk_node_query, params={'chunkParam': chunk})
+            node_count += 1
+    if config['general']['verbose']: print(f"Created {node_count} nodes")

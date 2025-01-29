@@ -7,7 +7,8 @@ config = {
     'general': {
         'script_name': "add_chunks.py",
         'description': "This script loads pdfs, chunks them up, and creates their embeddings.",
-        'version': "1.0.0"
+        'version': "1.0.0",
+        'verbose': False
     },
     'database': {
         'uri': os.getenv("NEO4J_URI"),
