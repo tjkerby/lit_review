@@ -16,11 +16,9 @@ config = {
         'password': os.getenv("NEO4J_PASSWORD"),
         'database': os.getenv("NEO4J_DATABASE")
     },
-    'model': {
-        'model_id': "meta-llama/Llama-3.2-1B"
-    },
     'embedding': {
-        'size': 2048,
+        'model_id': 'nomic-ai/nomic-embed-text-v1.5',
+        'size': 768,
         'similarity': 'cosine'
     }
 }

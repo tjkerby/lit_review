@@ -1,5 +1,4 @@
 from transformers import AutoTokenizer, AutoModel
-import torch
 from tqdm.auto import tqdm
 import sys
 
@@ -13,8 +12,9 @@ from abstract_embeddings_config import config
 def main():
     kg = utils.load_kg(config)
 
-    tokenizer = AutoTokenizer.from_pretrained(config['model']['model_id'])
-    model = AutoModel.from_pretrained(config['model']['model_id'])
+    tokenizer = AutoTokenizer.from_pretrained(config['embedding']['model_id'], model_max_length=8192)
+    model = AutoModel.from_pretrained(config['embedding']['model_id'], trust_remote_code=True, rotary_scaling_factor=2)
+    model.eval()
 
     result = kg.query("""
         MATCH (p:Paper) 
@@ -24,7 +24,8 @@ def main():
     
     for record in tqdm(result):       
         if record["abstract"]:
-            embedding = rag.compute_embedding(record["abstract"], tokenizer, model)
+            embedding = rag.compute_embedding_nomic(record["abstract"], tokenizer, model, config)
+            # embedding = rag.compute_embedding(record["abstract"], tokenizer, model)
             kg.query("""
                 MATCH (p:Paper) WHERE elementId(p) = $node_id
                 SET p.abstractEmbedding = $embedding

@@ -24,13 +24,15 @@ config = {
         'paper_chunk_output_name': 'paper_node_to_pdf_with_url.json' # Saved file with file_paths to pdfs
     },
     'model': {
-        'model_id': 'meta-llama/Llama-3.2-1B-Instruct'
+        'model_id': 'mosaicml/mpt-1b-chat'
+        # 'model_id': 'meta-llama/Llama-3.2-1B-Instruct'
         # 'model_id': "meta-llama/Llama-3.2-1B"
     },
     'embedding': {
-        'size': 768,#2048
+        'size': 768,
         'similarity': 'cosine',
-        'model_id': 'sentence-transformers/multi-qa-mpnet-base-dot-v1'
+        'model_id': 'nomic-ai/nomic-embed-text-v1.5'
+        # 'model_id': 'sentence-transformers/multi-qa-mpnet-base-dot-v1'
     },
     'chunks': {
         'chunk_size': 512,
