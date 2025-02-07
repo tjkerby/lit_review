@@ -24,7 +24,8 @@ config = {
         'paper_chunk_output_name': 'paper_node_to_pdf_with_url.json' # Saved file with file_paths to pdfs
     },
     'model': {
-        'model_id': 'mosaicml/mpt-1b-chat'
+        # 'model_id': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B'
+        'model_id': 'deepseek-ai/DeepSeek-R1-Distill-Qwen-7B'
         # 'model_id': 'meta-llama/Llama-3.2-1B-Instruct'
         # 'model_id': "meta-llama/Llama-3.2-1B"
     },

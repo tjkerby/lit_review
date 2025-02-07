@@ -1,0 +1,13 @@
+Training-free guidance for discrete diffusion models for molecular generation
+How discrete and continuous diffusion meet: Comprehensive analysis of discrete diffusion models via a stochastic integral framework
+Discrete Diffusion Modeling by Estimating the Ratios of the Data Distribution
+Structured Denoising Diffusion Models in Discrete State-Spaces
+DiGress: Discrete Denoising diffusion for graph generation
+Diffuse, Sample, Project: Plug-And-Play Controllable Graph Generation
+Latent Normalizing Flows for Discrete Sequences
+Discrete Flows: Invertible Generative Models of Discrete Data
+Score-based Continuous-time Discrete Diffusion Models
+Simple Guidance Mechanisms for Discrete Diffusion Models
+Derivative-Free Guidance in Continuous and Discrete Diffusion Models with Soft Value-Based Decoding
+Unlocking Guidance for Discrete State-Space Diffusion and Flow Models
+Protein Design with Guided Discrete Diffusion

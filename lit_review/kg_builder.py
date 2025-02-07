@@ -124,10 +124,14 @@ def remove_references_section(text):
     """
     Remove the references or bibliography section from the text.
     This function looks for headings like 'References' or 'Bibliography'
-    (case-insensitive) and returns text before that heading.
+    (case-insensitive), including markdown headers (e.g. '## References'),
+    and returns text before that heading.
     """
-    split_result = re.split(r"(?i)(?:\n|\r\n)(References|Bibliography)\b", text)
+    # This regex matches a newline, optional markdown header symbols (#) and spaces,
+    # then the word "References" or "Bibliography" (case-insensitive) as a whole word.
+    split_result = re.split(r"(?i)(?:\n|\r\n)(?:\s*#+\s*)?(References|Bibliography)\b", text)
     return split_result[0] if split_result else text
+
 
 def create_chunk_nodes(kg, data, text_splitter, config):
     kg.query("""
