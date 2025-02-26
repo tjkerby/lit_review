@@ -6,7 +6,7 @@ load_dotenv('/home/TomKerby/Research/lit_review/.env', override=True)
 config = {
     "llm": {
         "provider": "ollama",    # options: "ollama", "openai", "huggingface", etc.
-        'model_id': 'deepseek-r1:70b',
+        'model_id': 'llama3.3',
         "num_ctx": 32768,
         "num_predict": 4096,
         "temperature": 0.5,

@@ -9,9 +9,58 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, AutoConfig
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_neo4j import Neo4jVector
 
+from langchain_core.language_models.llms import LLM
+from langchain_core.outputs import GenerationChunk, LLMResult
+from typing import Any, AsyncIterator, Iterator, List, Optional
+
 class BaseLLM:
     def stream(self, prompt: str):
         raise NotImplementedError("stream() must be implemented by subclasses.")
+
+class LangChainWrapper(LLM):
+    adapter: BaseLLM  # Your existing adapter instance
+    streaming: bool = True
+    
+    @property
+    def _llm_type(self) -> str:
+        return "custom_adapter"
+
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> str:
+        """Non-streaming version"""
+        return "".join(self.adapter.stream(prompt))
+
+    def _stream(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        **kwargs: Any,
+    ) -> Iterator[GenerationChunk]:
+        """Streaming implementation"""
+        for token in self.adapter.stream(prompt):
+            yield GenerationChunk(text=token)
+
+    # Required abstract method implementations
+    def get_num_tokens(self, text: str) -> int:
+        return len(text.split())  # Improved in HuggingFace case below
+
+    # Optional async implementations
+    async def _acall(self, prompt: str, **kwargs: Any) -> str:
+        return self._call(prompt, **kwargs)
+
+    async def _astream(
+        self,
+        prompt: str,
+        **kwargs: Any,
+    ) -> AsyncIterator[GenerationChunk]:
+        for token in self.adapter.stream(prompt):
+            yield GenerationChunk(text=token)
+
+
 
 class OllamaAdapter(BaseLLM):
     def __init__(self, llm_config):
@@ -78,7 +127,7 @@ class HuggingFaceAdapter(BaseLLM):
             yield decoded
 
             if token_id == self.tokenizer.eos_token_id or generated_ids.shape[-1] >= self.max_seq_len:
-                break     
+                break   
     
 def get_llm(config):
     provider = config["llm"]["provider"].lower()
@@ -90,6 +139,10 @@ def get_llm(config):
         return HuggingFaceAdapter(config["llm"])
     else:
         raise ValueError(f"Unsupported LLM provider: {provider}")
+    
+def get_llm_with_memory(config):
+    base_llm = get_llm(config)
+    return LangChainWrapper(adapter=base_llm)
 
 class BaseEmbeddings:
     def embed_query(self, text: str):
