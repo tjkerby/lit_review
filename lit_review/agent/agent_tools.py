@@ -1,6 +1,6 @@
 from typing import Optional, Type
 from langchain_neo4j import Neo4jVector
-from langchain_core.vectorstores import VectorStore
+# from langchain_core.vectorstores import VectorStore
 
 from langchain_core.callbacks import (
     AsyncCallbackManagerForToolRun,
