@@ -31,6 +31,7 @@ matplotlib = "^3.10"
 langgraph = "^0.2.74"
 langgraph-checkpoint-sqlite = "^2"
 aiosqlite = "^0.20.0"
+wikipedia = "^1.4.0"
 
 
 [build-system]
