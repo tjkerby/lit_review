@@ -1,7 +1,8 @@
 import time, sys
 
-from langchain_ollama.llms import OllamaLLM
-from langchain.llms import OpenAI
+from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
+from langchain_huggingface import ChatHuggingFace
 from langchain_ollama.embeddings import OllamaEmbeddings
 from langchain.embeddings import OpenAIEmbeddings
 import torch
@@ -64,7 +65,7 @@ class LangChainWrapper(LLM):
 
 class OllamaAdapter(BaseLLM):
     def __init__(self, llm_config):
-        self.llm = OllamaLLM(
+        self.llm = ChatOllama(
             model=llm_config["model_id"],
             num_ctx=llm_config.get("num_ctx", 32768),
             num_predict=llm_config.get("num_predict", 4096),
@@ -75,7 +76,7 @@ class OllamaAdapter(BaseLLM):
 
 class OpenAIAdapter(BaseLLM):
     def __init__(self, llm_config):
-        self.llm = OpenAI(
+        self.llm = ChatOpenAI(
             model=llm_config["model_id"],
             temperature=llm_config.get("temperature", 0.5),
             openai_api_key=llm_config.get("api_key")
@@ -91,12 +92,13 @@ class HuggingFaceAdapter(BaseLLM):
         self.temperature = llm_config.get("temperature", 0.5)
         model_config = AutoConfig.from_pretrained(llm_config["model_id"], trust_remote_code=True)
         model_config.max_seq_len = max_seq_len
-        self.model = AutoModelForCausalLM.from_pretrained(
+        llm = AutoModelForCausalLM.from_pretrained(
             llm_config["model_id"],
             config=model_config,
             trust_remote_code=True,
             device_map="auto"
         )
+        self.model = ChatHuggingFace(llm=llm)
         self.tokenizer = AutoTokenizer.from_pretrained(llm_config["model_id"], trust_remote_code=True)
         self.tokenizer.model_max_length = max_seq_len
    

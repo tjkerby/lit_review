@@ -1,20 +1,17 @@
-from transformers import AutoTokenizer, AutoModel
+from langchain_ollama import OllamaEmbeddings
 from tqdm.auto import tqdm
 import sys
 
-sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/lit_review')
+sys.path.append('/home/TomKerby/Research/lit_review/lit_review')
 import utils 
-import rag_utils as rag
 
-sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/configs')
+sys.path.append('/home/TomKerby/Research/lit_review/configs')
 from abstract_embeddings_config import config
 
 def main():
     kg = utils.load_kg(config)
 
-    tokenizer = AutoTokenizer.from_pretrained(config['embedding']['model_id'], model_max_length=8192)
-    model = AutoModel.from_pretrained(config['embedding']['model_id'], trust_remote_code=True, rotary_scaling_factor=2)
-    model.eval()
+    embeddings = OllamaEmbeddings(model=config['embedding']['model_id'])
 
     result = kg.query("""
         MATCH (p:Paper) 
@@ -24,8 +21,7 @@ def main():
     
     for record in tqdm(result):       
         if record["abstract"]:
-            embedding = rag.compute_embedding_nomic(record["abstract"], tokenizer, model, config)
-            # embedding = rag.compute_embedding(record["abstract"], tokenizer, model)
+            embedding = embeddings.embed_query(record['abstract'])
             kg.query("""
                 MATCH (p:Paper) WHERE elementId(p) = $node_id
                 SET p.abstractEmbedding = $embedding

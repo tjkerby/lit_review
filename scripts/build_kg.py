@@ -1,13 +1,13 @@
 import sys
 from tqdm.auto import tqdm
 
-sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/lit_review')
+sys.path.append('/home/TomKerby/Research/lit_review/lit_review')
 import semantic_scholar_api as ss_api
 import neo4j_utils as nu
 import kg_builder as kgb
 import utils 
 
-sys.path.append('C:/Users/tjker/Desktop/Research/Projects/lit_review/configs')
+sys.path.append('/home/TomKerby/Research/lit_review/configs')
 from build_kg_config import config
 
 def main():

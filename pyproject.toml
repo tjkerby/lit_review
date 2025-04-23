@@ -6,7 +6,7 @@ authors = ["Tom Kerby <46465501+tjkerby@users.noreply.github.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<4.0"
+python = ">=3.10,<3.13"
 ipykernel = ">=6.27,<7.0"
 requests = ">=1.0"
 pandas = ">=2.0"
@@ -26,12 +26,15 @@ langchain-huggingface = ">=0.1.2,<0.2.0"
 einops = ">=0.8.0,<0.9.0"
 langchain-experimental = ">=0.3.4,<0.4.0"
 transformers = "^4.48.3"
-langchain-ollama = "^0.2.3"
+langchain-ollama = "^0.3.2"
 matplotlib = "^3.10"
 langgraph = "^0.2.74"
 langgraph-checkpoint-sqlite = "^2"
 aiosqlite = "^0.20.0"
 wikipedia = "^1.4.0"
+langchain-openai = "^0.3.12"
+arxiv = "^2.2.0"
+outlines = "^0.2.3"
 
 
 [build-system]

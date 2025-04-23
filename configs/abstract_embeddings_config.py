@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv('C:/Users/tjker/Desktop/Research/Projects/lit_review/.env', override=True)
+load_dotenv('/home/TomKerby/Research/lit_review/.env', override=True)
 
 config = {
     'general':  {
@@ -17,7 +17,7 @@ config = {
         'database': os.getenv("NEO4J_DATABASE")
     },
     'embedding': {
-        'model_id': 'nomic-ai/nomic-embed-text-v1.5',
+        'model_id': 'nomic-embed-text',
         'size': 768,
         'similarity': 'cosine'
     }

@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-load_dotenv('C:/Users/tjker/Desktop/Research/Projects/lit_review/.env', override=True)
+load_dotenv('/home/TomKerby/Research/lit_review/.env', override=True)
 
 config = {
     'general':  {

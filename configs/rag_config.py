@@ -5,7 +5,7 @@ load_dotenv('/home/TomKerby/Research/lit_review/.env', override=True)
 
 config = {
     'general': {
-        'script_name': "add_chunks.py",
+        'script_name': "ollama_rag.ipynb",
         'description': "This script loads pdfs, chunks them up, and creates their embeddings.",
         'version': "1.0.0",
         'verbose': False
@@ -16,13 +16,6 @@ config = {
         'password': os.getenv("NEO4J_PASSWORD"),
         'database': os.getenv("NEO4J_DATABASE")
     },
-    'data': {
-        'data_path': os.getenv("PROJECT_PATH") + 'data',
-        'titles_path': os.getenv("PROJECT_PATH") + 'data/paper_titles.txt',
-        'prep_paper_chunk_output_name': 'paper_node_to_url_pdf.json', # Intial file with structure for creating chunks
-        'paper_chunk_input_name': 'paper_node_to_url_pdf.json', # Saved file with urls linking to pdfs 
-        'paper_chunk_output_name': 'paper_node_to_pdf_with_url.json' # Saved file with file_paths to pdfs
-    },
     'model': {
         'model_id': 'deepseek-r1:70b'
     },
@@ -31,8 +24,9 @@ config = {
         'similarity': 'cosine',
         'model_id': 'nomic-embed-text'
     },
-    'chunks': {
-        'chunk_size': 512,
-        'chunk_overlap': 50
+    'rag': {
+        'index_name': 'paper_chunks',
+        'embedding_node_property': 'textEmbedding',
+        'text_node_property': 'text'
     }
 }
