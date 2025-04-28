@@ -14,6 +14,9 @@ from langchain_core.language_models.llms import LLM
 from langchain_core.outputs import GenerationChunk, LLMResult
 from typing import Any, AsyncIterator, Iterator, List, Optional
 
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+handler = StreamingStdOutCallbackHandler()
+
 class BaseLLM:
     def stream(self, prompt: str):
         raise NotImplementedError("stream() must be implemented by subclasses.")
@@ -69,7 +72,8 @@ class OllamaAdapter(BaseLLM):
             model=llm_config["model_id"],
             num_ctx=llm_config.get("num_ctx", 32768),
             num_predict=llm_config.get("num_predict", 4096),
-            temperature=llm_config.get("temperature", 0.5)
+            temperature=llm_config.get("temperature", 0.5),
+            callbacks=[handler]
         )
     def stream(self, prompt: str):
         return self.llm.stream(prompt)
@@ -79,7 +83,8 @@ class OpenAIAdapter(BaseLLM):
         self.llm = ChatOpenAI(
             model=llm_config["model_id"],
             temperature=llm_config.get("temperature", 0.5),
-            openai_api_key=llm_config.get("api_key")
+            openai_api_key=llm_config.get("api_key"),
+             allbacks=[handler]
         )
     def stream(self, prompt: str):
         response = self.llm(prompt)
@@ -98,7 +103,7 @@ class HuggingFaceAdapter(BaseLLM):
             trust_remote_code=True,
             device_map="auto"
         )
-        self.model = ChatHuggingFace(llm=llm)
+        self.model = ChatHuggingFace(llm=llm, callbacks=[handler])
         self.tokenizer = AutoTokenizer.from_pretrained(llm_config["model_id"], trust_remote_code=True)
         self.tokenizer.model_max_length = max_seq_len
    

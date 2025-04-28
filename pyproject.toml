@@ -35,6 +35,8 @@ wikipedia = "^1.4.0"
 langchain-openai = "^0.3.12"
 arxiv = "^2.2.0"
 outlines = "^0.2.3"
+gradio = "^5.27.0"
+langsmith = "^0.3.37"
 
 
 [build-system]

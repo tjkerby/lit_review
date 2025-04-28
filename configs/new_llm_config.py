@@ -6,7 +6,7 @@ load_dotenv('/home/TomKerby/Research/lit_review/.env', override=True)
 config = {
     "llm": {
         "provider": "ollama",    # options: "ollama", "openai", "huggingface", etc.
-        'model_id': 'llama3.3',
+        'model_id': "llama3.1:8b", # "llama3.3", #'qwen2.5:3b',
         "num_ctx": 32768,
         "num_predict": 4096,
         "temperature": 0.5,
